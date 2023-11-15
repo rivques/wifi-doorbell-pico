@@ -26,15 +26,19 @@ try:
 except Exception as e:
     print(f"error while connecting: {e}")
     blue_pin.value = False
-    while True:
-        pass
+    microcontroller.reset()
 
 blue_pin.value = False
 green_pin.value = False
 if alarm.wake_alarm is not None:
     blue_pin.value=True
     print("Fetching text from %s" % target_url)
-    response = requests.get(target_url)
+    try:
+        response = requests.get(target_url, timeout=5)
+    except Exception as e:
+        print(f"error while REQUESTING: {e}")
+        blue_pin.value = False
+        microcontroller.reset()
     blue_pin.value=False
     green_pin.value = True
     print(f"Got response: {response.text}")
